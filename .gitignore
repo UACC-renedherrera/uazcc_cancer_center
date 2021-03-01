@@ -37,3 +37,14 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# data folder
+data/
+
+# filetypes to ignore
+*.jpg
+*.png
+*.pdf
+*.pptx
+*.xlsx
+*.docx
