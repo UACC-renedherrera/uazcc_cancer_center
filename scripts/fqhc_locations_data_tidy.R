@@ -48,6 +48,16 @@ fqhc_satellites <- fqhc_df %>%
     date_added = x14
   )
 
+# combine fqhc into one data frame 
+fqhc_df <- full_join(fqhc_grantees, fqhc_satellites) 
+
+# remove empty columns 
+fqhc_df <- fqhc_df %>%
+  select(!(x12:x14))
+
+# save to disk
+write_rds(fqhc_df, "data/tidy/fqhc_list.rds")
+
 # attempt to geocode addresses 
 # grantees first
 # clean up address names 
@@ -92,6 +102,9 @@ fqhc_satellite_addresses_geo_points <- st_as_sf(fqhc_satellite_addresses_geo,
 # but first, import tigris county shape files 
 az_counties <- counties(state = "04")
 
+# and save to disk 
+write_rds(az_counties, "data/tidy/az_counties_sf.rds")
+
 # now visualize 
 ggplot() +
   geom_sf(data = az_counties, alpha = .1) +
@@ -107,3 +120,4 @@ st_write(fqhc_grantee_addresses_geo_points,
 st_write(fqhc_satellite_addresses_geo_points, 
          "data/gis/fqhc_satellites/fqhc_satellites.shp",
          append = FALSE)
+
