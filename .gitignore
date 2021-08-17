@@ -41,6 +41,9 @@ vignettes/*.pdf
 # data folder
 data/
 
+# ignore figures
+figures/
+
 # filetypes to ignore
 *.jpg
 *.png
@@ -48,3 +51,4 @@ data/
 *.pptx
 *.xlsx
 *.docx
+*.csv
