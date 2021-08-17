@@ -51,3 +51,9 @@ az_counties %>%
   filter(NAMELSAD %in% catchment_county_list) %>%
   ggplot() +
   geom_sf()
+
+# save catchment spatial to disk 
+catchment_counties <- az_counties %>%
+  filter(NAMELSAD %in% catchment_county_list)
+  
+st_write(catchment_counties, "data/gis/catchment_counties/catchment_counties.shp")
