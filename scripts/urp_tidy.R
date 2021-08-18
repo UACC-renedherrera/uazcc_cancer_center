@@ -21,6 +21,7 @@ accrual_by_age <- read_csv("data/raw/urp_trx_accrual_data_by_age.csv",
 
 # inspect
 glimpse(accrual_by_age)
+unique(accrual_by_age$age)
 
 # treatment accrual by ethnicity
 accrual_by_eth <- read_csv("data/raw/urp_trx_accrual_data_by_ethnicity.csv",
@@ -45,6 +46,7 @@ accrual_by_race <- read_csv("data/raw/urp_trx_accrual_data_by_race.csv",
 
 # inspect
 glimpse(accrual_by_race)
+unique(accrual_by_race$race)
 
 # treatment accrual by sex
 accrual_by_sex <- read_csv("data/raw/urp_trx_accrual_data_by_sex.csv",
@@ -88,3 +90,63 @@ new_cases <- new_cases %>%
 
 # inspect
 glimpse(new_cases)
+unique(new_cases$variable)
+
+# ana = analytic
+# therefore, for our purpose I don't think there needs to be an ana/non-ana distinction
+new_cases <- new_cases %>%
+  group_by(group, variable) %>%
+  summarize(estimate = sum(estimate))
+
+# in year 2020 what is percentage of accrual by new cases
+# accrual / new cases
+# hispanic ethnicity ####
+accrual_by_eth_hisp <- accrual_by_eth %>%
+  filter(year == "2020",
+         ethnicity == "Hispanic") %>%
+  summarize(total = sum(estimate)) %>%
+  pull()
+
+new_cases_by_eth_hisp <- new_cases %>%
+  ungroup() %>%
+  filter(group == "ethnicity",
+         variable == "Hispanic/Latino (any race)") %>%
+  pull(estimate)
+
+# accrual as a percentage of new cases
+100*(accrual_by_eth_hisp / new_cases_by_eth_hisp)
+
+# age 65+ ####
+accrual_by_age_65 <- accrual_by_age %>%
+  filter(year == "2020",
+         age == "65+") %>%
+  summarize(total = sum(estimate)) %>%
+  pull()
+
+new_cases_by_age_65 <- new_cases %>%
+  ungroup() %>%
+  filter(group == "age",
+         variable == "65+") %>%
+  pull(estimate)
+
+# accrual as a percentage of new cases
+100*(accrual_by_age_65 / new_cases_by_age_65)
+
+# race AIAN ####
+accrual_by_race_aian <- accrual_by_race %>%
+  filter(year == "2020",
+         race == "AI/AN") %>%
+  summarize(total = sum(estimate)) %>%
+  pull()
+
+new_cases_by_race_aian <- new_cases %>%
+  ungroup() %>%
+  filter(group == "race",
+         variable == "Native American/Alaska Native") %>%
+  pull(estimate)
+
+# accrual as a percentage of new cases
+100*(accrual_by_race_aian / new_cases_by_race_aian)
+
+
+
