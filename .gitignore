@@ -38,11 +38,13 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
+# folders to ignore
 # data folder
 data/
-
-# ignore figures
+# figures
 figures/
+# reports
+reports/
 
 # filetypes to ignore
 *.jpg
@@ -52,3 +54,4 @@ figures/
 *.xlsx
 *.docx
 *.csv
+*.html
