@@ -1,10 +1,17 @@
+# 
+# René Dario Herrera 
+# The University of Arizona Cancer Center 
+# renedherrera at email dot arizona dot edu
+# 30 August 2021 
+
 # set up
 # packages 
 library(here)
 library(tidyverse)
 library(readxl)
 library(zipcodeR)
-library(leaflet)
+# library(leaflet)
+library(tigris)
 
 #read data
 patient_zip <- read_excel("data/raw/Copy of Compiled patient data v2.xlsx",
@@ -47,28 +54,45 @@ az_patients <- orange_grove %>%
   #filter(count >= 10) %>% #filter out low counts for privacy
   group_by(id) 
 
+# inspect
+class(az_patients)
+az_patients
+glimpse(az_patients)
+
+# count of patient by clinic location 
 az_patients %>%
   summarise(sum(count))
 
-# prepare for mapping
+# count of patient by zip code 
+az_patients %>%
+  group_by(zipcode) %>%
+  summarise(count = sum(count)) %>%
+  arrange(desc(count))
+
+# add data to describe the counties and zip codes 
 zip_db <- zip_code_db
+
+# add zip code data to uazcc patient data 
+az_patients <- inner_join(
+  x = az_patients, 
+  y = zip_code_db, 
+  by = "zipcode",
+  keep = FALSE) %>%
+  drop_na()
+
+# add " County" to county
+# az_patients <- az_patients %>%
+#   mutate(county = paste(sep = " ", county, "County"))
+
+# count of patient by AZ county
+az_patients %>%
+  ungroup() %>%
+  group_by(county) %>%
+  summarize(count = sum(count)) %>%
+  arrange(desc(count))
 
 # preview
 glimpse(zip_db)
 
-# prepare for mapping
-az_patients <- inner_join(az_patients, zip_code_db, by = "zipcode") %>%
-  drop_na()
-
 # save to disk
 write_rds(az_patients, "data/tidy/uazcc_az_patients.rds")
-
-# preview
-glimpse(az_patients)
-
-names(providers)
-
-# generate map
-leaflet(data = az_patients) %>%
-  addProviderTiles(providers$Stamen.TonerBackground) %>%
-  addMarkers(~lng, ~lat)
